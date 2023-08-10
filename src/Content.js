@@ -1,22 +1,49 @@
 import React from 'react'
+import {useState} from "react";
+import { FaTrashCan } from "react-icons/fa6";
 
 const Content = () => {
-    const crush_name = "variable";
 
-    function decide(){
-      const verbs = ['love', 'hate', 'don\'t care about']
-      const pos = Math.floor(Math.random()*3)
-      return verbs[pos];
-    }
+    const [ items, Setitems] = useState(
+        [
+            {
+                id:1,
+                checked:true,
+                item:"Udemy NLP"
+            },
+            {
+                id:2,
+                checked:true,
+                item:"Mern stack"
+            },
+            {
+                id:3,
+                checked:true,
+                item:"Neetcode"
+            },
+        ]
+    )
 
-    const sayHi = (name) => {
-        console.log(`hi ${name}`)
-    }
-
-  return (
+    return (
     <main>
-        <p>I {decide()} {crush_name}</p>
-        <button onClick={() => sayHi("gokul")}> Press me </button>
+        <ul>
+            {
+                items.map( (item) => (
+                    <li>
+                        <input
+                            type="checkbox"
+                            checked={item.checked}
+                        />
+                        <label>
+                            {item.item}
+                        </label>
+                        <button>
+                            <FaTrashCan />
+                        </button>
+                    </li>
+                ))
+            }
+        </ul>
     </main>
   )
 }
