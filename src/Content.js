@@ -9,10 +9,15 @@ const Content = () => {
       return verbs[pos];
     }
 
+    const sayHi = (name) => {
+        console.log(`hi ${name}`)
+    }
+
   return (
-    <div>
+    <main>
         <p>I {decide()} {crush_name}</p>
-    </div>
+        <button onClick={() => sayHi("gokul")}> Press me </button>
+    </main>
   )
 }
 
