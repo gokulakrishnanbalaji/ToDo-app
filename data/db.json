@@ -1,0 +1,19 @@
+{
+    "items": [
+        {
+            "id": 1,
+            "checked": false,
+            "item": "React JS"
+        },
+        {
+            "id": 2,
+            "checked": true,
+            "item": "Git and Github"
+        },
+        {
+            "id": 2,
+            "checked": false,
+            "item": "TypeScript"
+        }
+    ]
+}

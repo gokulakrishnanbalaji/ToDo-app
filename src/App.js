@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import Header from "./Header";
 import Content from "./Content";
 import Footer from "./Footer";
@@ -6,20 +6,24 @@ import AddTask from "./AddTask";
 import SearchTask from "./SearchTask";
 
 function App(){
-    const [ items, setItems] = useState(localStorage.getItem('todo_list') ?
-        JSON.parse(localStorage.getItem('todo_list')) : []
-    )
+
+    const API_URL = 'http://localhost:3500/items'
+
+    const [ items, setItems] = useState([])
 
     const [newItem , setnewItem] = useState('')
 
     const [searchItem , setSearchItem] = useState('')
+
+    const [ isFetchError ,  setisFetchError] = useState(null)
+
+    const [ isLoading , setIsLoading] = useState(true)
 
     const handlecheckbox = (id) => {
         const new_items = items.map( (item) =>
             item.id === id ? {...item , checked:!item.checked} : item
         )
         setItems(new_items)
-        localStorage.setItem('todo_list' , JSON.stringify(new_items))
     }
 
     const deleteItem = (id) => {
@@ -28,7 +32,6 @@ function App(){
             item.id !== id
         )
         setItems(new_items)
-        localStorage.setItem('todo_list' , JSON.stringify(new_items))
     }
 
     const handleSubmit = (e) => {
@@ -47,8 +50,30 @@ function App(){
         }
         const listItems=[...items, tmpItem]
         setItems(listItems)
-        localStorage.setItem('todo_list', JSON.stringify(listItems))
     }
+
+    useEffect(() => {
+        const fetchItems = async() => {
+            try{
+                const response = await fetch(API_URL)
+                if(!response.ok){
+                    throw Error('Data Not Received')
+                }
+                const listItems = await response.json()
+                setItems(listItems)
+                setisFetchError(null)
+            }catch(err){
+                setisFetchError(err.message)
+            }finally{
+                setIsLoading(false)
+            }
+        }
+        setTimeout(()=>{
+            (async() => await fetchItems())()
+        },2000)
+
+        
+    },[])
 
   return (
       <div className={"App"}>
@@ -62,11 +87,15 @@ function App(){
               searchItem={searchItem}
               setSearchItem = {setSearchItem}
           />
-          <Content
-            items={items.filter( (item) => (item.item.toLowerCase()).includes(searchItem.toLowerCase()))}
-            handlecheckbox={handlecheckbox}
-            deleteItem={deleteItem}
-          />
+          <main>
+            {isFetchError && <p>Error : {isFetchError}</p>}
+            {isLoading && <p>Data is loading !!</p>}
+            {!isFetchError && !isLoading && <Content
+                items={items.filter( (item) => (item.item.toLowerCase()).includes(searchItem.toLowerCase()))}
+                handlecheckbox={handlecheckbox}
+                deleteItem={deleteItem}
+            />}
+          </main>
          <Footer
             length = {items.length}
          />
